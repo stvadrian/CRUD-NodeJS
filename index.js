@@ -25,7 +25,7 @@ app.use(
 );
 
 // Mount user-related routes
-app.use("/user", profileRoutes);
+app.use("/profile", profileRoutes);
 app.use("/action", actionRoutes);
 
 app.get("/", preventAuth, (req, res) => {
@@ -34,7 +34,7 @@ app.get("/", preventAuth, (req, res) => {
   const message = req.session.message;
   req.session.message = null;
 
-  res.render("login", { messageType, message });
+  res.render("pages/auth/login", { messageType, message });
 });
 app.post("/login", preventAuth, (req, res) => {
   const formData = req.body;
@@ -45,15 +45,18 @@ app.post("/login", preventAuth, (req, res) => {
       req.session.message =
         "Unknown error has occurred. Please try again later.";
       res.redirect("/");
+      return;
     }
 
     if (!user) {
       req.session.messageType = "error";
       req.session.message = "Invalid credentials!";
       res.redirect("/");
+      return;
     } else {
       req.session.user = user; // Set user information in the session
       res.redirect("/dashboard");
+      return;
     }
   });
 });
@@ -64,7 +67,7 @@ app.get("/register", preventAuth, (req, res) => {
   const message = req.session.message;
   req.session.message = null;
 
-  res.render("register", { messageType, message });
+  res.render("pages/auth/register", { messageType, message });
 });
 app.post("/register", preventAuth, (req, res) => {
   const formData = req.body;
@@ -75,6 +78,7 @@ app.post("/register", preventAuth, (req, res) => {
       req.session.message =
         "Unknown error has occurred. Please try again later.";
       res.redirect("/register");
+      return;
     }
 
     if (user) {
@@ -95,27 +99,37 @@ app.post("/register", preventAuth, (req, res) => {
             newUser[`user_${key}`] = formData[key];
           }
         }
-        const formattedDateTime = db.getCurrentDateTime();
-        newUser["created_at"] = formattedDateTime;
-        newUser["created_by"] = "NodeJS";
 
-        connection.query(
-          "INSERT INTO users SET ?",
-          newUser,
-          (queryErr, results) => {
-            connection.release();
-            if (queryErr) {
-              console.error("Error executing query:", queryErr);
-              res.status(500).send("Query error");
-              return;
-            }
-            console.log("New user inserted:", results.insertId);
-            req.session.messageType = "success";
-            req.session.message = "Success! Please Login Now";
+        db.hashPassword(newUser["user_password"])
+          .then((hash) => {
+            newUser["user_password"] = hash;
+            const formattedDateTime = db.getCurrentDateTime();
+            newUser["created_at"] = formattedDateTime;
+            newUser["created_by"] = "NodeJS";
 
-            res.redirect("/");
-          }
-        );
+            connection.query(
+              "INSERT INTO users SET ?",
+              newUser,
+              (queryErr, results) => {
+                connection.release();
+                if (queryErr) {
+                  console.error("Error executing query:", queryErr);
+                  res.status(500).send("Query error");
+                  return;
+                }
+                console.log("New user inserted:", results.insertId);
+                req.session.messageType = "success";
+                req.session.message = "Success! Please Login Now";
+
+                res.redirect("/");
+                return;
+              }
+            );
+          })
+          .catch((error) => {
+            // Handle the password hashing error
+            res.status(500).send("Password hashing error");
+          });
       });
     }
   });
@@ -137,7 +151,7 @@ app.get("/dashboard", requireAuth, (req, res) => {
         registeredUsers = [];
       }
 
-      res.render("dashboard", {
+      res.render("pages/general/dashboard", {
         user,
         messageType,
         message,

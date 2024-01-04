@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <!-- Include Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-200 flex justify-center items-center h-screen px-3">
+    <div class="bg-white p-8 rounded shadow-md w-96">
+      <h2 class="text-2xl font-bold mb-4"><%= title %></h2>
+      <% if (messageType) { %>
+      <div class="mb-4">
+        <p
+          class="<%= messageType === 'success' ? 'text-green-500' : 'text-red-500' %>"
+        >
+          <%= message %>
+        </p>
+      </div>
+      <% } %>
+
+      <div class="content"><%- content %></div>
+    </div>
+  </body>
+</html>

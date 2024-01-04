@@ -1,0 +1,85 @@
+<h2 class="text-2xl font-bold mb-4 mt-3">
+  Welcome, <%= user.user_fullname %>!
+</h2>
+
+<div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+  <h3 class="text-xl leading-none font-bold text-gray-900 mb-10">
+    Registered Users
+  </h3>
+  <div class="block w-full overflow-x-auto">
+    <table class="items-center w-full bg-transparent border-collapse">
+      <thead>
+        <tr>
+          <th
+            class="px-4 bg-gray-50 text-gray-700 align-middle py-3 font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap"
+          >
+            ID
+          </th>
+          <th
+            class="px-4 bg-gray-50 text-gray-700 align-middle py-3 font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap"
+          >
+            Username
+          </th>
+          <th
+            class="px-4 bg-gray-50 text-gray-700 align-middle py-3 font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap"
+          >
+            Fullname
+          </th>
+          <th
+            class="px-4 bg-gray-50 text-gray-700 align-middle py-3 font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap"
+          >
+            Created With
+          </th>
+          <th
+            class="px-4 bg-gray-50 text-gray-700 align-middle py-3 font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap min-w-140-px"
+          ></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <% registeredUsers.forEach(data => { %>
+        <tr class="text-gray-500">
+          <th
+            class="border-t-0 px-4 align-middle font-normal whitespace-nowrap p-4 text-left"
+          >
+            <%= data.user_id %>
+          </th>
+          <td
+            class="border-t-0 px-4 align-middle font-medium text-gray-900 whitespace-nowrap p-4"
+          >
+            <%= data.user_username %>
+          </td>
+          <td
+            class="border-t-0 px-4 align-middle font-medium text-gray-900 whitespace-nowrap p-4"
+          >
+            <%= data.user_fullname %>
+          </td>
+          <td
+            class="border-t-0 px-4 align-middle font-medium text-gray-900 whitespace-nowrap p-4"
+          >
+            <%= data.created_by %>
+          </td>
+          <td class="border-t-0 px-4 align-middle whitespace-nowrap p-4">
+            <% if (data.created_by == 'NodeJS' && data.user_id != user.user_id)
+            { %>
+            <button
+              class="delete-btn bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded"
+              data-deleteid="<%= data.user_id %>"
+            >
+              Delete
+            </button>
+
+            <form
+              action="/action/delete/user"
+              method="post"
+              id="formDelete<%= data.user_id %>"
+            >
+              <input type="hidden" name="user_id" value="<%= data.user_id %>" />
+            </form>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<form action="/login" method="POST">
+  <div class="mb-4">
+    <label for="username" class="block text-sm font-semibold mb-2"
+      >Username</label
+    >
+    <input
+      type="text"
+      id="username"
+      name="username"
+      required
+      class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+    />
+  </div>
+  <div class="mb-4">
+    <label for="password" class="block text-sm font-semibold mb-2"
+      >Password</label
+    >
+    <input
+      type="password"
+      id="password"
+      name="password"
+      required
+      class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+    />
+  </div>
+  <div class="mb-4">
+    <button
+      type="submit"
+      class="w-full bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600"
+    >
+      Login
+    </button>
+  </div>
+</form>
+<p class="text-center mt-2">
+  Don't have an account?
+  <a href="/register" class="text-blue-500 font-semibold hover:underline"
+    >Register here</a
+  >
+</p>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      #sidebar.collapsed {
+        transform: translateX(-150%);
+      }
+    </style>
+  </head>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <body class="bg-gray-100">
+    <div class="min-h-screen bg-blue-gray-50/50">
+      <!-- Sidebar Menu -->
+      <%- include('../partials/sidebar') %>
+
+      <!-- Main Content -->
+
+      <div class="p-4 md:ml-80">
+        <button
+          class="md:hidden block text-gray-500 focus:outline-none toggleSidebar"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </button>
+        <div class="p-1"><%- content %></div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  $(document).ready(function () {
+    $(".delete-btn").click(function () {
+      const deleteId = $(this).data("deleteid");
+      Swal.fire({
+        title: "Delete Row",
+        text: "Are you sure want to delete row with ID " + deleteId + "?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $("#formDelete" + deleteId).submit();
+        }
+      });
+    });
+
+    $(".toggleSidebar").click(function () {
+      $("#sidebar").toggleClass("hidden");
+    });
+  });
+</script>
+
+<% if (messageType) { %>
+<script>
+  $(document).ready(function () {
+    Swal.fire({
+      icon: "<%= messageType %>",
+      text: "<%= message %>",
+    });
+  });
+</script>
+<% } %>

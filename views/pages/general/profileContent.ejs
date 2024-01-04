@@ -1,0 +1,154 @@
+<div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-4">
+  <h3 class="text-xl leading-none font-bold text-gray-900 mb-10">
+    General Information
+  </h3>
+  <div class="block w-full overflow-x-auto">
+    <form action="/profile/update" method="post">
+      <div class="flex p-3 gap-10">
+        <img
+          class="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
+          src="https://placehold.jp/150x150.png"
+          alt="Bordered avatar"
+        />
+
+        <div class="items-center text-[#202142] w-full">
+          <div
+            class="flex flex-col items-center w-full mb-2 space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-6"
+          >
+            <div class="w-full">
+              <label
+                for="username"
+                class="block mb-2 text-sm font-medium text-indigo-900"
+                >Your Username</label
+              >
+              <input
+                type="text"
+                id="username"
+                class="border border-gray-300 text-indigo-900 text-sm rounded-lg bg-gray-300 block w-full p-2.5"
+                value="<%= user.user_username %>"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col items-center w-full mb-2 space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-6"
+          >
+            <div class="w-full">
+              <label
+                for="fullname"
+                class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+                >Your Fullname</label
+              >
+              <input
+                type="text"
+                name="fullname"
+                id="fullname"
+                class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+                placeholder="Your Fullname"
+                value="<%= user.user_fullname %>"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-4">
+  <h3 class="text-xl leading-none font-bold text-gray-900 mb-10">
+    Change Password
+  </h3>
+  <div class="block w-full overflow-x-auto">
+    <form action="/profile/change-password" method="post" id="passwordForm">
+      <div class="mb-4">
+        <div class="mb-2 sm:mb-6">
+          <label
+            for="current_password"
+            class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+            >Current Password</label
+          >
+          <input
+            type="password"
+            name="current_password"
+            id="current_password"
+            class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+            required
+          />
+        </div>
+
+        <div class="block md:flex gap-5">
+          <div class="mb-6 w-full">
+            <label
+              for="new_password"
+              class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+              >New Password</label
+            >
+            <input
+              type="password"
+              name="new_password"
+              id="new_password"
+              class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              required
+            />
+          </div>
+          <div class="mb-6 w-full">
+            <label
+              for="confirm_password"
+              class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+              >Confirm New Password</label
+            >
+            <input
+              type="password"
+              id="confirm_password"
+              class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              required
+            />
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#passwordForm").submit(function (event) {
+      var newPassword = $("#new_password").val();
+      var confirmNewPassword = $("#confirm_password").val();
+
+      if (newPassword.length < 6) {
+        event.preventDefault();
+        Swal.fire({
+          icon: "error",
+          text: "New password should be at least 6 characters long.",
+        });
+      } else if (newPassword !== confirmNewPassword) {
+        event.preventDefault();
+        Swal.fire({
+          icon: "error",
+          text: "New password and confirmation password doesn't match.",
+        });
+      }
+    });
+  });
+</script>

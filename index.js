@@ -127,8 +127,10 @@ app.post("/register", preventAuth, (req, res) => {
             );
           })
           .catch((error) => {
-            // Handle the password hashing error
-            res.status(500).send("Password hashing error");
+            req.session.messageType = "error";
+            req.session.message =
+              "An error occured while hashing your password. Try again later.";
+            res.redirect("/register");
           });
       });
     }

@@ -19,7 +19,7 @@ This project implements a simple login and registration system using Node.js, Ex
 
 1. Clone this repository.
 2. Install dependencies using `npm install`.
-3. Set up your MySQL database and configure the database connection in `database.js`.
+3. Set up your MySQL database and configure the database connection in `database.js` using the database.sql.
 4. Run the application using `node index.js`.
 
 ### Usage

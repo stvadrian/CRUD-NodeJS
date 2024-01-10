@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database"); // Import the database module
-const { requireAuth, preventAuth } = require("../middlewares/authMiddleware");
+const { requireAuth } = require("../middlewares/authMiddleware");
+const csrf = require("csurf");
+const csrfProtection = csrf({ cookie: true });
 
 router.get("/", requireAuth, (req, res) => {
   const messageType = req.session.messageType;
@@ -11,10 +13,16 @@ router.get("/", requireAuth, (req, res) => {
   const user = req.session.user;
   const active = "profile";
 
-  res.render("pages/general/profile", { messageType, message, user, active });
+  res.render("pages/general/profile", {
+    messageType,
+    message,
+    user,
+    active,
+    csrfToken: req.csrfToken(),
+  });
 });
 
-router.post("/update", requireAuth, (req, res) => {
+router.post("/update", csrfProtection, requireAuth, (req, res) => {
   const formData = req.body;
   const user = req.session.user;
   const update_at = db.getCurrentDateTime();
@@ -44,6 +52,7 @@ router.post("/update", requireAuth, (req, res) => {
             req.session.message =
               "Unknown error has occurred. Please try again later.";
             res.redirect("/");
+            return
           }
 
           const updatedUserData = user;
@@ -53,13 +62,14 @@ router.post("/update", requireAuth, (req, res) => {
           req.session.user = updatedUserData;
 
           res.redirect("/profile");
+          return
         });
       }
     );
   });
 });
 
-router.post("/change-password", requireAuth, (req, res) => {
+router.post("/change-password", csrfProtection, requireAuth, (req, res) => {
   const formData = req.body;
   const user = req.session.user;
   const newPassword = formData.new_password;

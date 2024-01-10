@@ -73,6 +73,7 @@
               method="post"
               id="formDelete<%= data.user_id %>"
             >
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
               <input type="hidden" name="user_id" value="<%= data.user_id %>" />
             </form>
             <% } %>

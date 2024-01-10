@@ -48,7 +48,7 @@ function comparePassword(enteredPassword, storedHash) {
 }
 
 function getUserByUsername(username, password, callback) {
-  let query = "SELECT * FROM users WHERE user_username = ?";
+  let query = "SELECT * FROM users WHERE user_username = ? AND created_by = 'NodeJS'";
   const values = [username];
 
   pool.getConnection((err, connection) => {
@@ -88,7 +88,7 @@ function getUserByUsername(username, password, callback) {
 }
 
 function getUserByUserID(userid, callback) {
-  let query = "SELECT * FROM users WHERE user_id = ?";
+  let query = "SELECT * FROM users WHERE user_id = ? AND created_by = 'NodeJS'";
 
   pool.getConnection((err, connection) => {
     if (err) {

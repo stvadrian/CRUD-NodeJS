@@ -5,6 +5,9 @@ const profileRoutes = require("./routes/profile"); // Import user-related routes
 const actionRoutes = require("./routes/action"); // Import user-related routes
 const bodyParser = require("body-parser");
 const { requireAuth, preventAuth } = require("./middlewares/authMiddleware");
+const csrf = require("csurf");
+const csrfProtection = csrf({ cookie: true });
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -13,6 +16,9 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true })); // Middleware to parse URL-encoded bodies
 app.set("view engine", "ejs"); // Set the view engine to EJS
 app.set("views", __dirname + "/views"); // Specify the directory for views/templates
+
+app.use(cookieParser());
+app.use(csrfProtection);
 
 // Set up session middleware
 app.use(
@@ -28,15 +34,23 @@ app.use(
 app.use("/profile", profileRoutes);
 app.use("/action", actionRoutes);
 
+app.get("/csrf-token", (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+
 app.get("/", preventAuth, (req, res) => {
   const messageType = req.session.messageType;
   req.session.messageType = null;
   const message = req.session.message;
   req.session.message = null;
 
-  res.render("pages/auth/login", { messageType, message });
+  res.render("pages/auth/login", {
+    messageType,
+    message,
+    csrfToken: req.csrfToken(),
+  });
 });
-app.post("/login", preventAuth, (req, res) => {
+app.post("/login", csrfProtection, preventAuth, (req, res) => {
   const formData = req.body;
 
   db.getUserByUsername(formData.username, formData.password, (err, user) => {
@@ -67,7 +81,11 @@ app.get("/register", preventAuth, (req, res) => {
   const message = req.session.message;
   req.session.message = null;
 
-  res.render("pages/auth/register", { messageType, message });
+  res.render("pages/auth/register", {
+    messageType,
+    message,
+    csrfToken: req.csrfToken(),
+  });
 });
 app.post("/register", preventAuth, (req, res) => {
   const formData = req.body;
@@ -96,6 +114,9 @@ app.post("/register", preventAuth, (req, res) => {
         const newUser = {};
         for (const key in formData) {
           if (Object.hasOwnProperty.call(formData, key)) {
+            if (key == "_csrf") {
+              continue;
+            }
             newUser[`user_${key}`] = formData[key];
           }
         }
@@ -160,6 +181,7 @@ app.get("/dashboard", requireAuth, (req, res) => {
         active,
         registeredUsers,
         title,
+        csrfToken: req.csrfToken(),
       });
     });
   } else {

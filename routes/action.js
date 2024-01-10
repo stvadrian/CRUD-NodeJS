@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database"); // Import the database module
+const { requireAuth } = require("../middlewares/authMiddleware");
+const csrf = require("csurf");
+const csrfProtection = csrf({ cookie: true });
 
-router.post("/delete/user", (req, res) => {
+router.post("/delete/user", csrfProtection, requireAuth, (req, res) => {
   const formData = req.body;
-  const referer = req.headers.referer || "/"; // Get the referring URL
+  const user_id = formData.user_id;
+  const referer = req.headers.referer || "/";
 
   db.pool.getConnection((err, connection) => {
     if (err) {
@@ -14,8 +18,8 @@ router.post("/delete/user", (req, res) => {
     }
 
     connection.query(
-      "DELETE FROM users WHERE ?",
-      formData,
+      "DELETE FROM users WHERE user_id = ?",
+      user_id,
       (queryErr, results) => {
         connection.release();
         if (queryErr) {
